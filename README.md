@@ -4,10 +4,11 @@
  Lateral Superior Olive (LSO) EI neurons:
  40 ipsilateral excitatory (E) inputs
  8 contralateral inhibitory (I) inputs
- 
+  
  Each input is driven by a model 
  auditory nerve fiber (ANF) (Zilany et al. 2014)
- of medium spontaneous rate.
+ of medium spontaneous rate,
+ and high characteristic-frequency.
  Complete ANF Matlab code downloaded from
  https://www.urmc.rochester.edu/labs/carney/publications-code/auditory-models.aspx
 
@@ -27,3 +28,5 @@
  with no frequency components above 2 kHz.
  25 stimulus repetitions per condition:
  do25*.py call lson25*.py.
+
+ In related filenames, IPD refers to envelope interaural phase difference, the IPD with respect to the amplitude modulation cycle. Phase in the carrier wareform was randomized in all stimuli at each envelope phase.
