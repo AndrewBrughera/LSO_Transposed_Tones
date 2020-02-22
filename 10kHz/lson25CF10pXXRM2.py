@@ -1,18 +1,18 @@
 # -*- coding: utf-8 -*-
 """
-Downloaded from Brian2 website on Sat Jan 13 10:02:04 2018
-
-Cochlear neuron model of Rothman & Manis
+Model LSO Neuron Type 2 - Andrew Brughera 2019 January to June, 
+the Wang & Colburn (2012) model  (tausE = 0.5*ms).
+Based on the Cochlear Nucleus neuron model of Rothman & Manis 2003,
+as implemented by Romain Brette, and downloaded from the Brian2 website 
+on Sat Jan 13 10:02:04 2018.
 ----------------------------------------
 Rothman JS, Manis PB (2003) The roles potassium currents play in
 regulating the electrical activity of ventral cochlear nucleus neurons.
 J Neurophysiol 89:3097-113.
 
-All model types differ only by the maximal conductances.
-
-Adapted from their Neuron implementation by Romain Brette
-
-Adapted for mso input model by Andrew Brughera
+My types of model LSO neurons differ by maximal membrane conductances,
+and by synaptic parameters. Originally downloading the RM2003 vcn model, 
+I developed my vcn and mso code, then this Lso code.
 """
 #from brian2.units import *
 #from brian2.stdunits import *
@@ -32,9 +32,9 @@ def lson(lsoInputSpkFileTuple, temp_degC=37):
 
     defaultclock.dt = 0.02*ms # for better precision
     
-    neuron_type='type2' # medium-fast membrane f0 180-260Hz, CF4kHz
+    neuron_type='type2' # medium speed membrane f0 88-130Hz CF 6kHz
     #temp_degC=37.
-    Vrest = -63.6*mV # resting potential for type1c from RM2003
+    Vrest = -63.6*mV # resting potential for type2 from RM2003
     
     nLsons = 1 # number of LSO neurons
     
@@ -131,8 +131,8 @@ def lson(lsoInputSpkFileTuple, temp_degC=37):
     type12=(1000, 150, 20, 0, 2, 0, 2),
     type21=(1000, 150, 35, 0, 3.5, 0, 2),
     type2=(1000, 150, 200, 0, 20, 0, 2),
-    type2g1p5x=(1000, 150, 300, 0, 30, 0, 2),
-    type2g0p5x=(1000, 150, 100, 0, 10, 0, 2),
+    type2gLTH2x=(1000, 150, 400, 0, 40, 0, 2),
+    type2gLTH0p5x=(1000, 150, 100, 0, 10, 0, 2),
     type2o=(1000, 150, 600, 0, 0, 40, 2) # octopus cell
     )
     gnabar, gkhtbar, gkltbar, gkabar, ghbar, gbarno, gl = [x * nS for x in maximal_conductances[neuron_type]]
@@ -268,7 +268,7 @@ def lson(lsoInputSpkFileTuple, temp_degC=37):
     lsonState = StateMonitor(lsonGrp, ['v','gs_e'], record=True)
 
     run(300*ms, report='text')
-    
+
     # Console Output Won't Clear from Script
     # Memory issue with so many repeated simulations:
     # Comment out the plt commands     
@@ -278,8 +278,8 @@ def lson(lsoInputSpkFileTuple, temp_degC=37):
     #plt.show()
     
     # Output file - EIPD in output filename. Spiketimes in file
-    EPhsStrCo = anCoSpkFile[27:31]
-    EPhsStrIp = anIpSpkFile[27:31]
+    EPhsStrCo = anCoSpkFile[35:39]
+    EPhsStrIp = anIpSpkFile[35:39]
     if (EPhsStrCo[0] == 'N'):
         EPhsIntCo = -1 * int(EPhsStrCo[1:4])
     else:
@@ -351,7 +351,7 @@ def lson(lsoInputSpkFileTuple, temp_degC=37):
         Wi = str(w_ilson/1e-9)
     Wi = Wi.replace('.','p')
     
-    lsonSpkFile = 'Lso2SpTms' + anCoSpkFile[6:13] + anCoSpkFile[16:23] + 'Te'+Te + 'We'+We + 'Ti'+Ti + 'Wi'+Wi + EIPDstr + 'Co' + anCoSpkFile[38:40] + anCoSpkFile[23:31] + anCoSpkFile[45:]
+    lsonSpkFile = 'Lso2SpT' + anCoSpkFile[6:13] + anCoSpkFile[16:21] + anCoSpkFile[24:31] + 'Te'+Te + 'We'+We + 'Ti'+Ti + 'Wi'+Wi + EIPDstr + 'C' + anCoSpkFile[46:48] + anCoSpkFile[31:33] + anCoSpkFile[35:39] + anCoSpkFile[53:]
     file0 = open(lsonSpkFile,'w')
     for index in range(len(lsonSpks.t)):
         file0.write(str(lsonSpks.i[index]) + " " + str(lsonSpks.t[index] / ms) + '\n')

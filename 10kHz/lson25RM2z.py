@@ -1,71 +1,57 @@
 # -*- coding: utf-8 -*-
 """
-Downloaded from Brian2 website on Sat Jan 13 10:02:04 2018
-
-Cochlear neuron model of Rothman & Manis
+Model LSO Neuron Type "2z" - Andrew Brughera 2019 January to June, 
+a modified Wang & Colburn (2012) model.
+Based on the Cochlear Nucleus neuron model of Rothman & Manis 2003,
+as implemented by Romain Brette, and downloaded from the Brian2 website 
+on Sat Jan 13 10:02:04 2018.
 ----------------------------------------
 Rothman JS, Manis PB (2003) The roles potassium currents play in
 regulating the electrical activity of ventral cochlear nucleus neurons.
 J Neurophysiol 89:3097-113.
 
-All model types differ only by the maximal conductances.
-
-Adapted from their Neuron implementation by Romain Brette
-
-Adapted for mso input model by Andrew Brughera
+My types of model LSO neurons differ by maximal membrane conductances,
+and by synaptic parameters. Originally downloading the RM2003 vcn model, 
+I developed my vcn and mso code, then this Lso code.
 """
 #from brian2.units import *
 #from brian2.stdunits import *
 #from brian2 import mV, amp, pA, pF, siemens, nS, ms, second
 from brian2 import mV, pA, pF, nS, ms
 from brian2 import SpikeGeneratorGroup, NeuronGroup, Synapses
-#from brian2 import SpikeMonitor, StateMonitor, Network, run
 from brian2 import SpikeMonitor, StateMonitor, run
 from brian2 import defaultclock
 from math import exp
 import numpy as np
 import matplotlib.pyplot as plt
 
-# To apply in ipython or script:  from bcfn import mkbcs
+# To apply in ipython or script:  from lson25RM2z import lson
 
 def lson(lsoInputSpkFileTuple, temp_degC=37):
 
     defaultclock.dt = 0.02*ms # for better precision
     
-    neuron_type='type2' # medium-fast membrane f0 180-260Hz, CF4kHz
-    #temp_degC=37.
-    Vrest = -63.6*mV # resting potential for type1c from RM2003
+    neuron_type='type2gLTH0p5x' # medium speed membrane, nominal f0 88Hz
+    Vrest = -63.6*mV # resting potential for type2 from RM2003
     
     nLsons = 1 # number of LSO neurons
     
-    nGbcsCo = 4
-#    nGbcsIp = 4
-#    nSbcsCo = 4
-    nSbcsIp = 4
-
-#    nSbcs = 4
-#    nAnfsPerSbc = 3
-#    nGbcs = 4
-#    nAnfsPerGbc=30
+    # As in Wang & Colburn (2012), the LSO model has simplified inputs.
+    # Spike times from model auditory nerve fibers represent inputs
+    # driven by the cochlear nucleus: contralateral inhibitory inputs
+    # driven by globular bushy cells via the MNTB, and ipsilateral
+    # excitatory inputs from spherical bushy cells.
     
     nAnfsPerInputFile = 40
 
     nGbcsCoPerLson = 8  # Gjoni et al. 2018
     nSbcsIpPerLson = 40 # Gjoni et al. 2018
 
-#    sbCoSpkFile = inputSpkFileTuple[0]
-#    sbIpSpkFile = lsoInputSpkFileTuple[1]
-#    gbCoSpkFile = lsoInputSpkFileTuple[2]
-#    gbIpSpkFile = inputSpkFileTuple[3]
+    #sbIpSpkFile = lsoInputSpkFileTuple[1]
+    #gbCoSpkFile = lsoInputSpkFileTuple[2]
     anCoSpkFile = lsoInputSpkFileTuple[0]
     anIpSpkFile = lsoInputSpkFileTuple[1]
 
-    
-#    sbCoIdxSpktimeArray = np.loadtxt(sbCoSpkFile)
-#    sbCoCellIndices = sbCoIdxSpktimeArray[:, 0].astype(int)
-#    sbCoSpkTimes = sbCoIdxSpktimeArray[:, 1] * ms
-#    sbCoSpkGenGrp = SpikeGeneratorGroup(nSbcsCo, sbCoCellIndices, sbCoSpkTimes)
-    
     gbCoIdxSpktimeArray = np.loadtxt(anCoSpkFile)
     gbCoCellIndices = gbCoIdxSpktimeArray[:, 0].astype(int)
     # For now, spiketimes from Zilany AN in SECONDS, so * 1000*ms
@@ -77,18 +63,6 @@ def lson(lsoInputSpkFileTuple, temp_degC=37):
     # For now, spiketimes from Zilany AN in SECONDS, so * 1000*ms
     sbIpSpkTimes = sbIpIdxSpktimeArray[:, 1] * 1000. * ms
     sbIpSpkGenGrp = SpikeGeneratorGroup(nAnfsPerInputFile, sbIpCellIndices, sbIpSpkTimes)
-    
-#    gbIpIdxSpktimeArray = np.loadtxt(gbIpSpkFile)
-#    gbIpCellIndices = gbIpIdxSpktimeArray[:, 0].astype(int)
-#    gbIpSpkTimes = gbIpIdxSpktimeArray[:, 1] * ms
-#    gbIpSpkGenGrp = SpikeGeneratorGroup(nGbcsIp, gbIpCellIndices, gbIpSpkTimes)
-    
-#    anfIdxSpktimeArray = np.loadtxt(anfSpkFile)
-#    anfIndices = anfIdxSpktimeArray[:, 0].astype(int)
-#    nANF = 132
-#    #anfSpkTimes = [i * second for i in anfIdxSpktimeArray[:, 1]]
-#    anfSpkTimes = anfIdxSpktimeArray[:, 1] * 1000*ms
-#    anfSpkGeneratorGrp = SpikeGeneratorGroup(nANF, anfIndices, anfSpkTimes)
     
     # Membrane and Ion-Channel parameters
     C = 12*pF
@@ -108,15 +82,15 @@ def lson(lsoInputSpkFileTuple, temp_degC=37):
     qt = 4.5 ** ((temp_degC - 33.) / 10.)
     # Synaptic parameters:
     Es_e = 0.*mV
-    tausE = 0.5*ms
+    tausE = 1.0*ms
     Es_i = -90*mV
-    tausI = 1.0*ms
+    tausI = 2.0*ms
     '''Synaptic weights are unitless according to Brian2.
     The effective unit is siemens, so they can work in amp, volt, siemens eqns.
     We multiply synaptic weight w_e by unit siemens when adding it to g_e.
     We use a local variable w_e for synaptic weight rather than the standard w:''' 
-    w_elson = 5e-9
-    w_ilson = 50e-9 # 6e-9 @ 200Hz; 12e-9 @ 600 Hz
+    w_elson = 3e-9
+    w_ilson = 30e-9 # 6e-9 @ 200Hz; 12e-9 @ 600 Hz
     '''Here's why:
     The synapses sbc3SynE.w synaptic weight references the Same State Variable as 
     as the neuron group sbc3Grp.w (klt activation w).
@@ -131,8 +105,10 @@ def lson(lsoInputSpkFileTuple, temp_degC=37):
     type12=(1000, 150, 20, 0, 2, 0, 2),
     type21=(1000, 150, 35, 0, 3.5, 0, 2),
     type2=(1000, 150, 200, 0, 20, 0, 2),
+    type2g2x=(2000, 300, 400, 0, 40, 0, 2),
     type2g1p5x=(1000, 150, 300, 0, 30, 0, 2),
-    type2g0p5x=(1000, 150, 100, 0, 10, 0, 2),
+    type2g1p2x=(1200, 180, 240, 0, 24, 0, 2),
+    type2gLTH0p5x=(1000, 150, 100, 0, 10, 0, 2),
     type2o=(1000, 150, 600, 0, 0, 40, 2) # octopus cell
     )
     gnabar, gkhtbar, gkltbar, gkabar, ghbar, gbarno, gl = [x * nS for x in maximal_conductances[neuron_type]]
@@ -227,11 +203,9 @@ def lson(lsoInputSpkFileTuple, temp_degC=37):
     
     lsonGrp = NeuronGroup(nLsons, eqs, method='exponential_euler', 
                         threshold='v > -30*mV', refractory='v > -45*mV')
-    #gbcGrp.I = 2500.0*pA
     lsonGrp.I = 0.0*pA
     # Initialize model near v_rest with no inputs
     lsonGrp.v = Vrest
-    #vu = EL/mV # unitless v
     vu = lsonGrp.v/mV # unitless v
     lsonGrp.m = 1./(1+exp(-(vu + 38.) / 7.))
     lsonGrp.h = 1./(1+exp((vu + 65.) / 6.))
@@ -247,8 +221,6 @@ def lson(lsoInputSpkFileTuple, temp_degC=37):
     lsonGrp.h2 = 1./(1+exp((vu+66.)/7.))
     #lsonGrp.gs_e = 0.0*siemens
     
-    #netGbcEq = Network(gbcGrp, report='text')
-    #netGbcEq.run(50*ms, report='text')
     
     lsonSynI = Synapses(gbCoSpkGenGrp, lsonGrp, 
                      model='''dg_i/dt = -g_i/tausI : siemens (clock-driven)
@@ -268,7 +240,7 @@ def lson(lsoInputSpkFileTuple, temp_degC=37):
     lsonState = StateMonitor(lsonGrp, ['v','gs_e'], record=True)
 
     run(300*ms, report='text')
-    
+
     # Console Output Won't Clear from Script
     # Memory issue with so many repeated simulations:
     # Comment out the plt commands     
@@ -323,9 +295,6 @@ def lson(lsoInputSpkFileTuple, temp_degC=37):
         EIPDstr = 'EIPDP000'
 
 
-#    if (EIPDint < 0):
-#        EIPDstr = EIPDstr.replace('-','N')
-        
     # Synaptic parameters in output filename
     if (abs(round(tausE/ms)-(tausE/ms)) < 0.1):
         Te = str(round(tausE/ms))
@@ -351,7 +320,7 @@ def lson(lsoInputSpkFileTuple, temp_degC=37):
         Wi = str(w_ilson/1e-9)
     Wi = Wi.replace('.','p')
     
-    lsonSpkFile = 'Lso2SpTms' + anCoSpkFile[6:13] + anCoSpkFile[16:23] + 'Te'+Te + 'We'+We + 'Ti'+Ti + 'Wi'+Wi + EIPDstr + 'Co' + anCoSpkFile[38:40] + anCoSpkFile[23:31] + anCoSpkFile[45:]
+    lsonSpkFile = 'Lso2zSpTms' + anCoSpkFile[6:13] + anCoSpkFile[16:23] + 'Te'+Te + 'We'+We + 'Ti'+Ti + 'Wi'+Wi + EIPDstr + 'Co' + anCoSpkFile[38:40] + anCoSpkFile[23:31] + anCoSpkFile[45:]
     file0 = open(lsonSpkFile,'w')
     for index in range(len(lsonSpks.t)):
         file0.write(str(lsonSpks.i[index]) + " " + str(lsonSpks.t[index] / ms) + '\n')

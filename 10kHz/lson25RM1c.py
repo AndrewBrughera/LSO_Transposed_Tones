@@ -19,7 +19,6 @@ Adapted for mso input model by Andrew Brughera
 #from brian2 import mV, amp, pA, pF, siemens, nS, ms, second
 from brian2 import mV, pA, pF, nS, ms
 from brian2 import SpikeGeneratorGroup, NeuronGroup, Synapses
-#from brian2 import SpikeMonitor, StateMonitor, Network, run
 from brian2 import SpikeMonitor, StateMonitor, run
 from brian2 import defaultclock
 from math import exp
@@ -32,9 +31,8 @@ def lson(lsoInputSpkFileTuple, temp_degC=37):
 
     defaultclock.dt = 0.02*ms # for better precision
     
-    neuron_type='type2' # medium-fast membrane f0 180-260Hz, CF4kHz
-    #temp_degC=37.
-    Vrest = -63.6*mV # resting potential for type1c from RM2003
+    neuron_type='type1c' # slow membrane for CF 10 kHz
+    Vrest = -63.9*mV # resting potential for type1c from RM2003
     
     nLsons = 1 # number of LSO neurons
     
@@ -108,15 +106,15 @@ def lson(lsoInputSpkFileTuple, temp_degC=37):
     qt = 4.5 ** ((temp_degC - 33.) / 10.)
     # Synaptic parameters:
     Es_e = 0.*mV
-    tausE = 0.5*ms
+    tausE = 1.5*ms
     Es_i = -90*mV
-    tausI = 1.0*ms
+    tausI = 3.0*ms
     '''Synaptic weights are unitless according to Brian2.
     The effective unit is siemens, so they can work in amp, volt, siemens eqns.
     We multiply synaptic weight w_e by unit siemens when adding it to g_e.
     We use a local variable w_e for synaptic weight rather than the standard w:''' 
-    w_elson = 5e-9
-    w_ilson = 50e-9 # 6e-9 @ 200Hz; 12e-9 @ 600 Hz
+    w_elson = 0.7e-9
+    w_ilson = 7e-9 # 6e-9 @ 200Hz; 12e-9 @ 600 Hz
     '''Here's why:
     The synapses sbc3SynE.w synaptic weight references the Same State Variable as 
     as the neuron group sbc3Grp.w (klt activation w).
@@ -131,8 +129,8 @@ def lson(lsoInputSpkFileTuple, temp_degC=37):
     type12=(1000, 150, 20, 0, 2, 0, 2),
     type21=(1000, 150, 35, 0, 3.5, 0, 2),
     type2=(1000, 150, 200, 0, 20, 0, 2),
-    type2g1p5x=(1000, 150, 300, 0, 30, 0, 2),
-    type2g0p5x=(1000, 150, 100, 0, 10, 0, 2),
+    type2gLTH2x=(1000, 150, 400, 0, 40, 0, 2),
+    type2gLTH0p5x=(1000, 150, 100, 0, 10, 0, 2),
     type2o=(1000, 150, 600, 0, 0, 40, 2) # octopus cell
     )
     gnabar, gkhtbar, gkltbar, gkabar, ghbar, gbarno, gl = [x * nS for x in maximal_conductances[neuron_type]]
@@ -269,13 +267,14 @@ def lson(lsoInputSpkFileTuple, temp_degC=37):
 
     run(300*ms, report='text')
     
-    # Console Output Won't Clear from Script
-    # Memory issue with so many repeated simulations:
-    # Comment out the plt commands     
-    #plt.plot(lsonState.t / ms, lsonState[0].v / mV)
-    #plt.xlabel('t (ms)')
-    #plt.ylabel('v (mV)')
-    #plt.show()
+    plt.plot(lsonState.t / ms, lsonState[0].v / mV)
+    #plt.plot(gbcState.t / ms, gbcState[0].gs_e)
+    #plt.plot(gSynEState.t / ms, gSynEState[0].gs_e_post)
+    #plt.plot(gSynEState.t / ms, gSynEState[0].g_e)
+    
+    plt.xlabel('t (ms)')
+    plt.ylabel('v (mV)')
+    plt.show()
     
     # Output file - EIPD in output filename. Spiketimes in file
     EPhsStrCo = anCoSpkFile[27:31]
@@ -289,7 +288,7 @@ def lson(lsoInputSpkFileTuple, temp_degC=37):
     else:
         EPhsIntIp = int(EPhsStrIp[0:3])
 #    EIPD = (EPhsIntCo - EPhsIntIp) % 360
-    EIPDint = (EPhsIntCo - EPhsIntIp) # unwrapped Envelope IPD
+    EIPDint = (EPhsIntCo - EPhsIntIp) # unwrapped Envelope EIPD
     #EIPDstr = str(EIPDint)
     if (EIPDint == 15):
         EIPDstr = 'EIPDP015'
@@ -351,7 +350,7 @@ def lson(lsoInputSpkFileTuple, temp_degC=37):
         Wi = str(w_ilson/1e-9)
     Wi = Wi.replace('.','p')
     
-    lsonSpkFile = 'Lso2SpTms' + anCoSpkFile[6:13] + anCoSpkFile[16:23] + 'Te'+Te + 'We'+We + 'Ti'+Ti + 'Wi'+Wi + EIPDstr + 'Co' + anCoSpkFile[38:40] + anCoSpkFile[23:31] + anCoSpkFile[45:]
+    lsonSpkFile = 'Lso1cSpTms' + anCoSpkFile[6:13] + anCoSpkFile[16:23] + 'Te'+Te + 'We'+We + 'Ti'+Ti + 'Wi'+Wi + EIPDstr + 'Co' + anCoSpkFile[38:40] + anCoSpkFile[23:31] + anCoSpkFile[45:]
     file0 = open(lsonSpkFile,'w')
     for index in range(len(lsonSpks.t)):
         file0.write(str(lsonSpks.i[index]) + " " + str(lsonSpks.t[index] / ms) + '\n')
