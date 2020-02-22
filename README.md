@@ -1,7 +1,17 @@
 # LSO_Transposed_Tones
- HodgkinHuxleyType models: EI neurons in populations
+ (Anaconda Python 3.7, Brian 2 Neural Simulator)HodgkinHuxleyType models: EI neurons in populations
 
- 24 model neurons per population
+ Lateral Superior Olive (LSO) EI neurons:
+ 40 ipsilateral excitatory (E) inputs
+ 8 contralateral inhibitory (I) inputs
+ 
+ Each input is driven by a model 
+ auditory nerve fiber (ANF) (Zilany et al. 2014)
+ of medium spontaneous rate.
+ Complete ANF Matlab code downloaded from
+ https://www.urmc.rochester.edu/labs/carney/publications-code/auditory-models.aspx
+
+ 24 model LSO neurons per population
  4 populations by speed:
  1c - Slow - Rothman & Manis 2003 (RM03)
  2z - Moderate
