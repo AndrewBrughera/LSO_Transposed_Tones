@@ -13,13 +13,13 @@
  https://www.urmc.rochester.edu/labs/carney/publications-code/auditory-models.aspx
 
  24 model LSO neurons per population
- 6 populations by membrane properties:
- 1c - Slow - Rothman & Manis 2003 (RM03);
- 1a - Moderate;
- 1b - HL-Quick;
- 2z - Brisk;
- 2  - Fast - Wang & Colburn 2012, RM03;
- 2f - Very Fast.
+ 6 populations by membrane type:
+ 1c Slow (Rothman & Manis 2003 (RM03)); 
+ 1a Moderate; 
+ 1b HL-Quick; 
+ 2z Brisk; 
+ 2  Fast (Wang & Colburn 2012; RM03); 
+ 2f Very Fast. 
  Brisk, fast & very fast include
  low-threshold potassium (KLT) currents.
 
