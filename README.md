@@ -14,11 +14,11 @@
 
  24 model LSO neurons per population
  6 populations by membrane type:
- 1c Slow (Rothman & Manis 2003 (RM03)); 
+ 1c Slow (Rothman & Manis 2003); 
  1a Moderate; 
  1b HL-Quick; 
  2z Brisk; 
- 2  Fast (Wang & Colburn 2012; RM03); 
+ 2  Fast (Wang & Colburn 2012; Rothman & Manis 2003); 
  2f Very Fast. 
  Brisk, fast & very fast include
  low-threshold potassium (KLT) currents.
