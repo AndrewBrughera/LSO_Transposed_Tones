@@ -2,7 +2,7 @@
 """
 do25CF10p43LsoRM2zIPD10kHz.py
 
-Calls a model LSO neuron type 2z (moderate-speed membrane)
+Calls a model LSO neuron type 2z (brisk membrane)
 with input from spikeTime files of model auditory nerve fibers 
 (Zilany et al., 2014) for 25 stimulus repetitions of transposed tones at 4 kHz,
 with modulation rates given in variable modFreqs_Hz.
