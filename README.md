@@ -13,12 +13,14 @@
  https://www.urmc.rochester.edu/labs/carney/publications-code/auditory-models.aspx
 
  24 model LSO neurons per population
- 4 populations by speed:
- 1c - Slow - Rothman & Manis 2003 (RM03)
- 2z - Moderate
- 2  - Fast - Wang & Colburn 2012, RM03
- 2f - Very Fast
- Moderate, fast & very fast include
+ 6 populations by membrane type:
+ 1c Slow (Rothman & Manis 2003 (RM03)); 
+ 1a Moderate; 
+ 1b HL-Quick; 
+ 2z Brisk; 
+ 2  Fast (Wang & Colburn 2012; RM03); 
+ 2f Very Fast. 
+ Brisk, fast & very fast include
  low-threshold potassium (KLT) currents.
 
  Transposed tone stimuli:
