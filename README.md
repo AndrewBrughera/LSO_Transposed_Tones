@@ -32,3 +32,6 @@
  do25*.py call lson25*.py.
 
  In related filenames, IPD refers to envelope interaural phase difference, the IPD with respect to the amplitude modulation cycle. Phase in the carrier wareform was randomized in all stimuli at each envelope phase.
+
+ Unmodulated tone stimuli:
+ During peer review, unmodulated tones with interaural intensity differences from -30 to 30 dB were added as a control condition at the stimulus frequencies of 4, 6, and 10 kHz. Related code is in folder IID_UnmodulatedTones.
