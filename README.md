@@ -12,7 +12,7 @@
  Complete ANF Matlab code downloaded from
  https://www.urmc.rochester.edu/labs/carney/publications-code/auditory-models.aspx
 
- 24 model LSO neurons per population
+ 24 model EI neurons per population
  6 populations by membrane type:
  1c Slow (Rothman & Manis 2003); 
  1a Moderate; 
@@ -23,7 +23,7 @@
  Brisk, fast & very fast include
  low-threshold potassium (KLT) currents.
 
- Transposed tone stimuli:
+ Transposed-tone stimuli:
  Carrier frequencies: 4, 6, 10 kHz
  Modulation rates: 32, 64, 128, 256, 512, 800 Hz
  Envelope is half-wave rectified sinusoid,
@@ -33,5 +33,5 @@
 
  In related filenames, IPD refers to envelope interaural phase difference, the IPD with respect to the amplitude modulation cycle. Phase in the carrier wareform was randomized in all stimuli at each envelope phase.
 
- Unmodulated tone stimuli:
+ Unmodulated-tone stimuli:
  During peer review, unmodulated tones with interaural intensity differences from -30 to 30 dB were added as a control condition at the stimulus frequencies of 4, 6, and 10 kHz. Related code is in folder IID_UnmodulatedTones.
