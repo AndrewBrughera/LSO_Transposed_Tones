@@ -4,7 +4,7 @@ doLsoRM1b_IID_10kHz.py
 
 Calls a model LSO neuron type 1b (non-resonant, fast membrane, 
 lson from lsonRM1b_IID.py) with input from spikeTime files of model auditory 
-nerve fibers (Zilany et al., 2014) for stimulus pure tones at 4 kHz.
+nerve fibers (Zilany et al., 2014) for stimulus pure tones at 10 kHz.
 
 Created on Thu 6 May 2021
 

@@ -4,7 +4,7 @@ doLsoRM2f_IID_6kHz.py
 
 Calls a model LSO neuron type 2f (resonant, very fast membrane, 
 lson from lsonRM2f_IID.py) with input from spikeTime files of model auditory 
-nerve fibers (Zilany et al., 2014) for stimulus pure tones at 4 kHz.
+nerve fibers (Zilany et al., 2014) for stimulus pure tones at 6 kHz.
 
 Created on Thu 6 May 2021
 
